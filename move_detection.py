@@ -269,7 +269,7 @@ def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3,yolo_box = Tru
                 origin_frame[roi_left_list[roi_id][1]:roi_right_list[roi_id][1],
                 roi_left_list[roi_id][0]:roi_right_list[roi_id][0], :] = show_roi
             cv.imshow("origin_frame_detect",origin_frame)
-            cv.waitKey(int((1 / fps) * 1000))  # 按照FPS显示图片
+            cv.waitKey(int((1 / fps) * 800))  # 按照FPS显示图片
 
     print('共计时间：', time.time() - t1)
     return detect_list
@@ -277,9 +277,9 @@ def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3,yolo_box = Tru
 
 if __name__ == '__main__':
     
-    capture_video = cv.VideoCapture("/home/coolshen/Desktop/data/my_data/数据2/9屏16（静帧、黑屏）.mp4")
+    # capture_video = cv.VideoCapture("/home/coolshen/Desktop/data/my_data/数据2/9屏16（静帧、黑屏）.mp4")
 
-    # capture_video = cv.VideoCapture("/home/coolshen/Desktop/data/my_data/数据2/9屏14（蓝屏）.mp4")
+    capture_video = cv.VideoCapture("/home/coolshen/Desktop/data/my_data/数据2/9屏14（蓝屏）.mp4")
 
     sThre = 15  # sThre表示像素阈值
 
