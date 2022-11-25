@@ -269,7 +269,7 @@ def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3,yolo_box = Tru
                 origin_frame[roi_left_list[roi_id][1]:roi_right_list[roi_id][1],
                 roi_left_list[roi_id][0]:roi_right_list[roi_id][0], :] = show_roi
             cv.imshow("origin_frame_detect",origin_frame)
-            cv.waitKey(int((1 / fps) * 800))  # 按照FPS显示图片
+            cv.waitKey(int((1 / fps) * 600))  # 按照FPS显示图片
 
     print('共计时间：', time.time() - t1)
     return detect_list
