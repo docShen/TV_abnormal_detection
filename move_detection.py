@@ -243,9 +243,7 @@ def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3,yolo_box = Tru
                 move_pxl_num = np.sum((roi_img[1] == 255))
                 moving_ratio = np.round(move_pxl_num / frame_area, 4)  # 计算运动比例
                 show_roi = copy.deepcopy(roi_img[0])
-                cv.putText(show_roi, 'move_lambda'+str(moving_ratio), (5, 10), cv.FONT_HERSHEY_COMPLEX, 0.5, (0, 255, 0), 1)
-
-
+                cv.putText(show_roi, 'move_lambda'+str(moving_ratio), (5, 20), cv.FONT_HERSHEY_COMPLEX, 0.5, (0, 255, 0), 1)
 
                 if moving_ratio <= 0.001:
 
@@ -255,21 +253,22 @@ def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3,yolo_box = Tru
                     _, show_roi_gray = cv.threshold(show_roi_gray, 60, 255, cv.THRESH_BINARY)
                     # cv.imshow(f'roi_gray{roi_id}',show_roi_gray)
 
+                    #蓝屏检测
                     if (np.sum(show_roi[:,:,0] > 128) / frame_area) > 0.5 and (np.sum(show_roi[:,:,1:] < 128) / (frame_area * 2)) > 0.5:
                         cv.putText(show_roi, 'bule!!!!!', (5, 70), cv.FONT_HERSHEY_COMPLEX, 1,
                                    (255, 0, 0), 2)
-
+                    # 黑屏检测
                     if np.round(np.sum(show_roi_gray == 0 ) / frame_area,4) > 0.5:
                         cv.putText(show_roi, 'black!!!!!', (5, 50), cv.FONT_HERSHEY_COMPLEX, 1,
                                    (0, 0, 0), 2)
-
+                    # 静止检测
                     cv.putText(show_roi, 'static!' , (5, 30), cv.FONT_HERSHEY_COMPLEX, 1,
                                (0, 0, 255), 2)
 
-
-                cv.imshow(f'input_frame_{roi_id}', show_roi)
-                # cv.imshow(f'detection_{roi_id}', roi_img[1])
-
+                # cv.imshow(f'input_frame_{roi_id}', show_roi)
+                origin_frame[roi_left_list[roi_id][1]:roi_right_list[roi_id][1],
+                roi_left_list[roi_id][0]:roi_right_list[roi_id][0], :] = show_roi
+            cv.imshow("origin_frame_detect",origin_frame)
             cv.waitKey(int((1 / fps) * 1000))  # 按照FPS显示图片
 
     print('共计时间：', time.time() - t1)
@@ -284,4 +283,4 @@ if __name__ == '__main__':
 
     sThre = 15  # sThre表示像素阈值
 
-    detect_out = move_detec(capture_video, sThre, step=3, show=True, gas_kel_size=7)
+    detect_out = move_detec(capture_video, sThre, step=3, show=True, gas_kel_size=7 , yolo_box = True)
