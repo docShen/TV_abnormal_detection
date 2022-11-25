@@ -3,7 +3,7 @@ import time
 import cv2 as cv
 import numpy as np
 # from draw_rectangle import *
-
+from yolo_demo import detect
 
 import copy
 import cv2
@@ -158,7 +158,7 @@ def absdiff_demo(image_1, image_2, sThre, gas_kel_size=3):
     return d_frame
 
 
-def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3):
+def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3,yolo_box = True):
     '''
 
     Args:
@@ -176,36 +176,44 @@ def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3):
     print(
         '总帧数 {0}帧, 宽度 {1}  高度{2}  FPS {3} ，视频时长 {4} 秒'.format(frame_count, frame_width, frame_height, fps,
                                                                            np.round(frame_count / fps, 2)))
-
     detect_list = []  # return
     all_frame = []
     for f in range(frame_count + 1):
         ret, frame = capture.read()
         if ret == True:
             all_frame.append(frame)  # get ndarry frame
+    roi_left_list = []
+    roi_right_list = []
+    if yolo_box:
 
-    # draw and select roi
-    '''
-    用第1帧来确定roi区域
-    '''
-    image = all_frame[0]
-    draw_rects = DrawRects(image, (0, 255, 0), 2)
-    cv2.namedWindow(WIN_NAME, 0)
+        get_frame_img = all_frame[0]  #用第0帧来取框
+        get_frame_img_path = './测试数据/get_frame_img.jpg'
+        cv.imwrite(get_frame_img_path,get_frame_img)
+        # yolo取框
+        img,bbox = detect(img_path=get_frame_img_path)
+        roi_num = int(bbox.shape[0])
+        for b in bbox:
+            roi_left_list.append([int(b[0]),int(b[1])])
+            roi_right_list.append([int(b[2]),int(b[3])])
 
-    cv2.setMouseCallback(WIN_NAME, draw_rects.onmouse_draw_rect, draw_rects)
-    while True:
-        cv2.imshow(WIN_NAME, draw_rects.image_for_show)
-        key = cv2.waitKey(30)
-        if key == 27:  # ESC
-            break
-
-    cv2.destroyAllWindows()
-
-    assert len(draw_rects.xy_list) == len(draw_rects.xy_afer_list), '矩形宽出错！'
-
-    roi_left_list = draw_rects.xy_list
-    roi_right_list = draw_rects.xy_afer_list
-    roi_num = len(draw_rects.xy_afer_list)
+    else:
+        '''
+        用第1帧来确定roi区域
+        '''
+        image = all_frame[0]
+        draw_rects = DrawRects(image, (0, 255, 0), 2)
+        cv2.namedWindow(WIN_NAME, 0)
+        cv2.setMouseCallback(WIN_NAME, draw_rects.onmouse_draw_rect, draw_rects)
+        while True:
+            cv2.imshow(WIN_NAME, draw_rects.image_for_show)
+            key = cv2.waitKey(30)
+            if key == 27:  # ESC
+                break
+        cv2.destroyAllWindows()
+        assert len(draw_rects.xy_list) == len(draw_rects.xy_afer_list), '矩形宽出错！'
+        roi_left_list = draw_rects.xy_list
+        roi_right_list = draw_rects.xy_afer_list
+        roi_num = len(draw_rects.xy_afer_list)
 
     t1 = time.time()
     for idx, f_img in enumerate(all_frame):
@@ -213,12 +221,8 @@ def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3):
 
         roi_img_list = []
         for r in range(roi_num):
-            # roi_weight = roi_right_list[r][0] - roi_left_list[r][0]
-            # roi_height = roi_right_list[r][1] - roi_left_list[r][1]
-
             if r == 0:
                 origin_frame = frame_this
-
             frame_this = origin_frame[roi_left_list[r][1]:roi_right_list[r][1],
                          roi_left_list[r][0]:roi_right_list[r][0], :]
 
@@ -273,9 +277,10 @@ def move_detec(capture, sThre, step=1, show=False, gas_kel_size=3):
 
 
 if __name__ == '__main__':
-    # capture_video = cv.VideoCapture("/home/coolshen/Desktop/data/my_data/数据2/9屏16（静帧、黑屏）.mp4")
+    
+    capture_video = cv.VideoCapture("/home/coolshen/Desktop/data/my_data/数据2/9屏16（静帧、黑屏）.mp4")
 
-    capture_video = cv.VideoCapture("/home/coolshen/Desktop/data/my_data/数据2/9屏14（蓝屏）.mp4")
+    # capture_video = cv.VideoCapture("/home/coolshen/Desktop/data/my_data/数据2/9屏14（蓝屏）.mp4")
 
     sThre = 15  # sThre表示像素阈值
 
