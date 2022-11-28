@@ -333,8 +333,6 @@ def detect(img_path):
 
     return result_image ,bbox
 
-
-
 if __name__ == '__main__':
 
     img_path = '/home/coolshen/Desktop/code/mycode/TV_abnormal_detection/测试数据/test_tV.jpg'
