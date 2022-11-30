@@ -254,18 +254,18 @@ class Move_D():
                         if (np.sum(show_roi[:,:,0] > 128) / frame_area) > 0.5 and (np.sum(show_roi[:,:,1:] < 128) / (frame_area * 2)) > 0.5:
                             cv.putText(show_roi, 'bule!!!!!', (5, 70), cv.FONT_HERSHEY_COMPLEX, 1,
                                        (255, 0, 0), 2)
-                            blue_ano = dt.datetime.now().strftime('%F %T') + 'blue'
+                            blue_ano = dt.datetime.now().strftime('%F %T') + '-->blue'
 
                         # 黑屏检测
                         if np.round(np.sum(show_roi_gray == 0 ) / frame_area,4) > 0.5:
                             cv.putText(show_roi, 'black!!!!!', (5, 50), cv.FONT_HERSHEY_COMPLEX, 1,
                                        (0, 0, 0), 2)
-                            black_ano = dt.datetime.now().strftime('%F %T') + 'black'
+                            black_ano = dt.datetime.now().strftime('%F %T') + '-->black'
 
                         # 静止检测
                         cv.putText(show_roi, 'static!' , (5, 30), cv.FONT_HERSHEY_COMPLEX, 1,
                                    (0, 0, 255), 2)
-                        static_ano = dt.datetime.now().strftime('%F %T') + 'static'
+                        static_ano = dt.datetime.now().strftime('%F %T') + '-->static'
 
                     # cv.imshow(f'input_frame_{roi_id}', show_roi)
                     origin_frame[self.roi_left_list[roi_id][1]:self.roi_right_list[roi_id][1],
