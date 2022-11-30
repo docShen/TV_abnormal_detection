@@ -58,16 +58,24 @@ class Mytk():
 
     def detection(self,all_frame):
         self.lb.delete(0, END)
+        with open('./abnormal_log.txt', 'a') as f:
+            for idx, f_img in enumerate(all_frame):
+                origin_frame,anolist = self.my_det.move_detec(idx,f_img)
+                self.video_stream(origin_frame)
+                if anolist[0] != None:
+                    self.insert_info(anolist[0])
+                    f.write(f'{anolist[0]}\n')
 
-        for idx, f_img in enumerate(all_frame):
-            origin_frame,anolist = self.my_det.move_detec(idx,f_img)
-            self.video_stream(origin_frame)
-            if anolist[0] != None:
-                self.insert_info(anolist[0])
-            if anolist[1] != None:
-                self.insert_info(anolist[1])
-            if anolist[2] != None:
-                self.insert_info(anolist[2])
+                if anolist[1] != None:
+                    self.insert_info(anolist[1])
+                    f.write(f'{anolist[1]}\n')
+
+                if anolist[2] != None:
+                    self.insert_info(anolist[2])
+                    f.write(f'{anolist[2]}\n')
+
+
+
 
     def video_stream(self,frame):
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
@@ -77,10 +85,9 @@ class Mytk():
         self.lmian.configure(image=imgtk)
         time.sleep(1 / (self.my_det.fps + 10))
         self.win.update()
-
+        self.lb.delete(0, END)
     def insert_info(self,info):
         self.lb.insert(tkinter.END, info)
-
     def updata1(self):
         self.roi_method = True
 
